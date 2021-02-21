@@ -9,8 +9,14 @@ public class Cube : MonoBehaviour
     Vector3 velocity;
     float mass = 2000;
     Vector3 acceleration;
+    //Material m_Material;
+    Renderer cubeRenderer;
 
     void Start(){
+        //Prepare for being able to change color
+        cubeRenderer = this.GetComponent<Renderer>();
+        
+        //initilize cube
         force = Vector3.zero;
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
@@ -20,6 +26,7 @@ public class Cube : MonoBehaviour
     void FixedUpdate(){
         if(transform.position.y <= 0.51f){
             stopAtButtom();
+            changeColor();
         } else{
             updateVelocity();
             updatePos();
@@ -55,6 +62,14 @@ public class Cube : MonoBehaviour
 
     public void updatePos(){
         transform.position = transform.position + velocity;
+    }
+
+    public void colliding(){
+        changeColor();
+    }
+
+    public void changeColor(){
+        cubeRenderer.material.SetColor("_Color", Color.blue);
     }
     
 }
