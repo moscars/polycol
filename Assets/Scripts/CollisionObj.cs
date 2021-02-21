@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cube : MonoBehaviour
+public class CollisionObj : MonoBehaviour
 {
     public Vector3 gravityForce = new Vector3(0, -9.82f, 0);
     public Vector3 force;
@@ -10,23 +10,33 @@ public class Cube : MonoBehaviour
     float mass = 2000;
     Vector3 acceleration;
     //Material m_Material;
-    Renderer cubeRenderer;
+    Renderer objRenderer;
+    public bool isColliding;
+    Vector3 position;
 
     void Start(){
         //Prepare for being able to change color
-        cubeRenderer = this.GetComponent<Renderer>();
+        objRenderer = this.GetComponent<Renderer>();
         
         //initilize cube
+        isColliding = false;
         force = Vector3.zero;
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
         addForce(gravityForce);
     }
 
+
+    void Update(){
+        if (isColliding){
+            changeColor();
+        }
+    }
+
     void FixedUpdate(){
         if(transform.position.y <= 0.51f){
             stopAtButtom();
-            changeColor();
+            isColliding = true;
         } else{
             updateVelocity();
             updatePos();
@@ -69,7 +79,15 @@ public class Cube : MonoBehaviour
     }
 
     public void changeColor(){
-        cubeRenderer.material.SetColor("_Color", Color.blue);
+        objRenderer.material.SetColor("_Color", Color.blue);
+    }
+
+    public void setCollidingToTrue(){
+        isColliding = true;
+    }
+
+    public void setCollidingToFalse(){
+        isColliding = false;
     }
     
 }

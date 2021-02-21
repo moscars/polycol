@@ -12,7 +12,7 @@ public class GJK
 
 
 
-    void respondToCollision(Cube collider){
+    void respondToCollision(CollisionObj collider){
         collider.colliding();
     }
  
