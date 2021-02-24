@@ -9,15 +9,10 @@ public class CollisionObj : MonoBehaviour
     Vector3 velocity;
     float mass = 2000;
     Vector3 acceleration;
-    //Material m_Material;
-    Renderer objRenderer;
     public bool isColliding;
     Vector3 position;
 
     void Start(){
-        //Prepare for being able to change color
-        objRenderer = this.GetComponent<Renderer>();
-        
         //initilize cube
         isColliding = false;
         force = Vector3.zero;
@@ -79,7 +74,11 @@ public class CollisionObj : MonoBehaviour
     }
 
     public void changeColor(){
-        objRenderer.material.SetColor("_Color", Color.blue);
+        GetComponent<Renderer>().material.color = Color.blue;
+    }
+
+    public void changeColorGJK(){
+        GetComponent<Renderer>().material.color = Color.green;
     }
 
     public void setCollidingToTrue(){
