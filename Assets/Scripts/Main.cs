@@ -5,26 +5,30 @@ using UnityEngine;
 public class Main : MonoBehaviour
 {
     // Start is called before the first frame update
-    public GameObject collisionPrefab;
+    public GameObject colObject;
 
     private List <GameObject> objList;
+    int counter = 0;
 
     void Start()
     {
-        objList = new List<GameObject>();
+        CreateNewObj();
     }
 
     // Update is called once per frame
     void Update()
     {
-        CreateNewObj();
-        foreach (GameObject obj in objList){
-
+        if(counter % 25 == 0){
+            CreateNewObj();
+        }
+        counter++;
+        if(counter > 10000){
+            counter = 0;
         }
     }
 
     void CreateNewObj(){
-        Vector3 pos = new Vector3(20, 20, 20);
-        Instatiate(collisionPrefab, Vector3.zero, Quaternion.identity);
+        Vector3 pos = new Vector3(0, 20, 0);
+        Instantiate(colObject, pos, Quaternion.identity);
     }
 }
