@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CollisionObj : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class CollisionObj : MonoBehaviour
     Vector3 acceleration;
     public bool isColliding;
     Vector3 position;
+    public List<Vector3> vertices;
 
     void Start(){
         //initilize cube
@@ -87,6 +89,16 @@ public class CollisionObj : MonoBehaviour
 
     public void setCollidingToFalse(){
         isColliding = false;
+    }
+
+    public List<Vector3> getVertices(){
+        //Get vertices here
+         List<Vector3> vertices = new List<Vector3>(v);
+         return vertices;
+    }
+
+    public Vector3 getPos(){
+        return transform.position;
     }
     
 }

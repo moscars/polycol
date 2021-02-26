@@ -6,21 +6,27 @@ public class Main : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject colObject;
+    public GameObject vertexPrefab;
     List<CollisionObj> colliders;
+    List<GameObject> vertexList;
     public GJK gjkAlgo;
+    List<Vector3> toDraw;
 
     int counter = 0;
 
     void Start()
     {
         colliders = new List<CollisionObj>();
+        vertexList = new List<GameObject>();
         gjkAlgo = new GJK();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(counter % 10 == 0){
+        toDraw = new List<Vector3>();
+        //destoryAllOldVertices();   
+        if(counter % 50 == 0){
             CreateNewObj();
         }
         counter++;
@@ -28,16 +34,28 @@ public class Main : MonoBehaviour
             counter = 0;
         }
         runGJK();
+        drawVertices();
+        gjkAlgo.emptyVertices();
     }
 
     void runGJK(){
         foreach (CollisionObj collider in colliders){
-          
+            List<Vector3> list = gjkAlgo.getVerticesOfObj(collider);
+            foreach(Vector3 vertex in list){
+                toDraw.Add(vertex);
+            }
         }
-        if(colliders.Count > 3){
-            CollisionObj obj1 = colliders[colliders.Count - 1];
-            CollisionObj obj2 = colliders[colliders.Count - 2];
-            gjkAlgo.runGJK(obj1, obj2);
+    }
+
+    void drawVertices(){
+        foreach (Vector3 pos in toDraw){
+            instantiateVertex(pos);
+        }
+    }
+
+    void destoryAllOldVertices(){
+        foreach (GameObject vertex in vertexList){
+            Destroy(vertex);
         }
     }
 
@@ -50,5 +68,10 @@ public class Main : MonoBehaviour
         GameObject obj = Instantiate(colObject, pos, Quaternion.identity);
         CollisionObj colObj = obj.GetComponent<CollisionObj>();
         colliders.Add(colObj);
+    }
+
+    public void instantiateVertex(Vector3 pos){
+      GameObject obj = Instantiate(vertexPrefab, pos, Quaternion.identity);
+      vertexList.Add(obj);
     }
 }

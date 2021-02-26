@@ -6,6 +6,9 @@ MonoImporter:
   defaultReferences:
   - colObject: {fileID: 8483741569012535294, guid: 221be30bb1ed746b4b4ad83b6c1433d7,
       type: 3}
+  - gjkAlgo: {instanceID: 0}
+  - vertexPrefab: {fileID: 2731330069500946249, guid: cab75ede44e904367bad3265f19b4c2c,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
