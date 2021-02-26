@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class GJK : MonoBehaviour
 {
-    public List<Vector3> vertices;
-    public GJK(){
-      vertices = new List<Vector3>();
-    }
+    public GJK(){}
 
     public void runGJK(CollisionObj obj1, CollisionObj obj2){
       if(gjk(obj1, obj2)){
@@ -31,13 +28,5 @@ public class GJK : MonoBehaviour
       if(pos.y < 10){
         obj.changeColorGJK();
       }
-    }
-
-    public void emptyVertices(){
-      vertices = new List<Vector3>();
-    }
-
-    public List<Vector3> getVerticesToLight(){
-      return vertices;
     }
 }

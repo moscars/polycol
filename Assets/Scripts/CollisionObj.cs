@@ -93,8 +93,14 @@ public class CollisionObj : MonoBehaviour
 
     public List<Vector3> getVertices(){
         //Get vertices here
-         List<Vector3> vertices = new List<Vector3>(v);
-         return vertices;
+        Mesh mesh = this.GetComponent<MeshFilter>().mesh;
+        Vector3[] v = mesh.vertices;
+        List<Vector3> vertices = new List<Vector3>();
+        foreach (Vector3 vec in v){
+            Vector3 worldPoint = transform.TransformPoint(vec);
+            vertices.Add(worldPoint);
+        }
+        return vertices;
     }
 
     public Vector3 getPos(){

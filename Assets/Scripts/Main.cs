@@ -8,7 +8,7 @@ public class Main : MonoBehaviour
     public GameObject colObject;
     public GameObject vertexPrefab;
     List<CollisionObj> colliders;
-    List<GameObject> vertexList;
+    List<GameObject> vertexPrefabList;
     public GJK gjkAlgo;
     List<Vector3> toDraw;
 
@@ -17,7 +17,7 @@ public class Main : MonoBehaviour
     void Start()
     {
         colliders = new List<CollisionObj>();
-        vertexList = new List<GameObject>();
+        vertexPrefabList = new List<GameObject>();
         gjkAlgo = new GJK();
     }
 
@@ -25,17 +25,14 @@ public class Main : MonoBehaviour
     void Update()
     {
         toDraw = new List<Vector3>();
-        //destoryAllOldVertices();   
+        destoryAllOldVertexPrefabs();   
         if(counter % 50 == 0){
             CreateNewObj();
+            counter = 1;
         }
         counter++;
-        if(counter > 10000){
-            counter = 0;
-        }
         runGJK();
         drawVertices();
-        gjkAlgo.emptyVertices();
     }
 
     void runGJK(){
@@ -53,8 +50,8 @@ public class Main : MonoBehaviour
         }
     }
 
-    void destoryAllOldVertices(){
-        foreach (GameObject vertex in vertexList){
+    void destoryAllOldVertexPrefabs(){
+        foreach (GameObject vertex in vertexPrefabList){
             Destroy(vertex);
         }
     }
@@ -72,6 +69,6 @@ public class Main : MonoBehaviour
 
     public void instantiateVertex(Vector3 pos){
       GameObject obj = Instantiate(vertexPrefab, pos, Quaternion.identity);
-      vertexList.Add(obj);
+      vertexPrefabList.Add(obj);
     }
 }
