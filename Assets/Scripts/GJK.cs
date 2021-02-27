@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GJK : MonoBehaviour
+public class GJK
 {
     public GJK(){}
 

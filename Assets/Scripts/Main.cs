@@ -48,6 +48,7 @@ public class Main : MonoBehaviour
         foreach (Vector3 pos in toDraw){
             instantiateVertex(pos);
         }
+        Debug.Log(toDraw.Count);
     }
 
     void destoryAllOldVertexPrefabs(){

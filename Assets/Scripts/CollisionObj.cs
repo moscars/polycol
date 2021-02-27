@@ -12,7 +12,6 @@ public class CollisionObj : MonoBehaviour
     Vector3 acceleration;
     public bool isColliding;
     Vector3 position;
-    public List<Vector3> vertices;
 
     void Start(){
         //initilize cube
@@ -93,12 +92,14 @@ public class CollisionObj : MonoBehaviour
 
     public List<Vector3> getVertices(){
         //Get vertices here
-        Mesh mesh = this.GetComponent<MeshFilter>().mesh;
+        Mesh mesh = GetComponent<MeshFilter>().mesh;
         Vector3[] v = mesh.vertices;
         List<Vector3> vertices = new List<Vector3>();
         foreach (Vector3 vec in v){
             Vector3 worldPoint = transform.TransformPoint(vec);
-            vertices.Add(worldPoint);
+            if(!vertices.Contains(worldPoint)){
+                vertices.Add(worldPoint);
+            }
         }
         return vertices;
     }
