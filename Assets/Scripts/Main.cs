@@ -11,6 +11,7 @@ public class Main : MonoBehaviour
     List<GameObject> vertexPrefabList;
     public GJK gjkAlgo;
     List<Vector3> toDraw;
+    float x;
 
     int counter = 0;
 
@@ -19,16 +20,19 @@ public class Main : MonoBehaviour
         colliders = new List<CollisionObj>();
         vertexPrefabList = new List<GameObject>();
         gjkAlgo = new GJK();
+        x = 0;  
     }
 
     // Update is called once per frame
     void Update()
     {
         toDraw = new List<Vector3>();
-        destoryAllOldVertexPrefabs();   
-        if(counter % 50 == 0){
+        destoryAllOldVertexPrefabs();
+        if(counter % 25 == 0){
+            /*CreateObjCloser(x);
+            x += 1.7f;
+            counter = 1;*/
             CreateNewObj();
-            counter = 1;
         }
         counter++;
         runGJK();
@@ -57,8 +61,17 @@ public class Main : MonoBehaviour
         }
     }
 
+    void CreateObjCloser(float x){
+        float y = 20;
+        float z = 0;
+        Vector3 pos = new Vector3(x, y, z);
+        GameObject obj = Instantiate(colObject, pos, Quaternion.identity);
+        CollisionObj colObj = obj.GetComponent<CollisionObj>();
+        colliders.Add(colObj);
+    }
+
     void CreateNewObj(){
-        float extent = 8f;
+        float extent = 4f;
         float randomX = Random.Range(-extent, extent);
         float randomZ = Random.Range(-extent, extent);
         float randomY = Random.Range(15f, 25f);

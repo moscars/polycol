@@ -16,10 +16,8 @@ public class GJK
     public bool gjk(CollisionObj firstCollider, CollisionObj secondCollider){
       Vector3 dir = new Vector3(1, 1, 1);
       Vector3 firstPoint = findMaxPointInConvexHull(dir, firstCollider, secondCollider);
-
       List<Vector3> SimplexList = new List<Vector3>();
       SimplexList.Add(firstPoint);
-
       dir = -firstPoint;
       SimplexList.Insert(0, dir); 
       Vector3 retFalse = new Vector3(0, 0, 0);
@@ -32,13 +30,11 @@ public class GJK
         Vector3 direction = SimplexList[1];
         Vector3 newPoint = findMaxPointInConvexHull(direction, firstCollider, secondCollider);
         float newDotDir = Vector3.Dot(newPoint, direction);
-        
-        if(newDotDir < 0){
+        if(newDotDir <= 0){
           return false;
-          
         }
 
-        SimplexList.Add(newPoint);
+        SimplexList.Insert(2, newPoint);
         SimplexList = NewSimplex(SimplexList);
         if(SimplexList[0] == new Vector3(1, 1, 1)){ // Check the boolean flag
           
