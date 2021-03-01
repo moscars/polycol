@@ -21,17 +21,17 @@ public class GJK
       SimplexList.Add(firstPoint);
 
       dir = -firstPoint;
-      SimplexList.Insert(dir); 
+      SimplexList.Insert(0, dir); 
       Vector3 retFalse = new Vector3(0, 0, 0);
-      SimplexList.Insert(retFalse); 
+      SimplexList.Insert(0, retFalse); 
       // First element in SimplexList is boolean flag
       // Second element in SimplexList is directionVector
-      // The other elements in SimplexList is the actual Simplex
+      // The other elements in SimplexList are the Simplex points
 
-      while(1){
+      while(true){
         Vector3 direction = SimplexList[1];
         Vector3 newPoint = findMaxPointInConvexHull(direction, firstCollider, secondCollider);
-        Vector3 newDotDir = Vector3.Dot(newPoint, direction);
+        float newDotDir = Vector3.Dot(newPoint, direction);
         
         if(newDotDir < 0){
           return false;
@@ -43,7 +43,6 @@ public class GJK
           return true;
         }
       }
-
     } 
 
 
@@ -66,8 +65,8 @@ public class GJK
       Vector3 AO = -pointA;
 
       if(SameDir(AB, AO)){
-        direction = Vector3.CrossProduct(AB, Vector3.CrossProduct(AO, AB));
-        
+        direction = Vector3.CrossProduct(Vector3.CrossProduct(AB, AO), AB);
+
         return returnFunc(SimplexList, direction, false);
       } else{
         SimplexList.RemoveAt(3);
@@ -75,6 +74,54 @@ public class GJK
 
         return returnFunc(SimplexList, direction, false);
       }
+    }
+
+      public List<Vector3> Triangle(List<Vector3> SimplexList){
+        Vector3 pointA = SimplexList[2];
+        Vector3 pointB = SimplexList[3];
+        Vector3 pointC = SimplexList[4];
+        Vector3 direction = SimplexList[1];
+
+        Vector3 AB = pointB - pointA;
+        Vector3 AC = pointC - pointA;
+        Vector3 AO = -pointA;
+
+        Vector3 ABC = Vector3.CrossProduct(AB, AC);
+
+        if(SameDir(Vector3.CrossProduct(ABC, AC), AO)){
+          
+          if(SameDir(AC, AO)){
+            SimplexList.RemoveAt(3);
+            direction = Vector3.CrossProduct(Vector3.CrossProduct(AC, A0), AC);
+            return returnFunc(SimplexList, direction, false);
+          
+          } else{
+            SimplexList.RemoveAt(4);
+            return Line(SimplexList);
+          
+          }
+
+        } else{
+          
+          if(SameDir(Vector3.CrossProduct(AB, ABC), AO)){
+            SimplexList.RemoveAt(4);
+            return Line(SimplexList);
+          
+          } else{
+            
+            if(SameDir(ABC, AO)){
+              direction = ABC;
+              return returnFunc(SimplexList, direction, false);
+            
+            } else{
+              direction = -ABC;
+              SimplexList[3] = pointC;
+              SimplexList[4] = pointB;
+
+              return returnFunc(SimplexList, direction, false);
+            }
+          }
+        }
     }
 
     public List<Vector3> returnFunc(List<Vector3> SimplexList, Vector3 direction, bool returnValue){
