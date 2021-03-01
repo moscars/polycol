@@ -8,8 +8,8 @@ public class GJK
 
     public void runGJK(CollisionObj firstCollider, CollisionObj secondCollider){
       if(gjk(firstCollider, secondCollider)){
-        //firstCollider.changeColorGJK();
-        //secondCollider.changeColorGJK();
+        firstCollider.changeColorGJK();
+        secondCollider.changeColorGJK();
       }
     }
 
@@ -35,11 +35,13 @@ public class GJK
         
         if(newDotDir < 0){
           return false;
+          
         }
 
         SimplexList.Add(newPoint);
         SimplexList = NewSimplex(SimplexList);
         if(SimplexList[0] == new Vector3(1, 1, 1)){ // Check the boolean flag
+          
           return true;
         }
       }
@@ -53,6 +55,8 @@ public class GJK
           case 5: return Triangle(SimplexList);
           case 6: return Tetrahedron(SimplexList);
       }
+
+      return returnFunc(SimplexList, SimplexList[1], false);
     }
 
 
@@ -65,7 +69,7 @@ public class GJK
       Vector3 AO = -pointA;
 
       if(SameDir(AB, AO)){
-        direction = Vector3.CrossProduct(Vector3.CrossProduct(AB, AO), AB);
+        direction = Vector3.Cross(Vector3.Cross(AB, AO), AB);
 
         return returnFunc(SimplexList, direction, false);
       } else{
@@ -86,13 +90,13 @@ public class GJK
         Vector3 AC = pointC - pointA;
         Vector3 AO = -pointA;
 
-        Vector3 ABC = Vector3.CrossProduct(AB, AC);
+        Vector3 ABC = Vector3.Cross(AB, AC);
 
-        if(SameDir(Vector3.CrossProduct(ABC, AC), AO)){
+        if(SameDir(Vector3.Cross(ABC, AC), AO)){
           
           if(SameDir(AC, AO)){
             SimplexList.RemoveAt(3);
-            direction = Vector3.CrossProduct(Vector3.CrossProduct(AC, A0), AC);
+            direction = Vector3.Cross(Vector3.Cross(AC, AO), AC);
             return returnFunc(SimplexList, direction, false);
           
           } else{
@@ -103,7 +107,7 @@ public class GJK
 
         } else{
           
-          if(SameDir(Vector3.CrossProduct(AB, ABC), AO)){
+          if(SameDir(Vector3.Cross(AB, ABC), AO)){
             SimplexList.RemoveAt(4);
             return Line(SimplexList);
           
@@ -122,6 +126,43 @@ public class GJK
             }
           }
         }
+    }
+
+    public List<Vector3> Tetrahedron(List<Vector3> SimplexList){
+      Vector3 pointA = SimplexList[2];
+      Vector3 pointB = SimplexList[3];
+      Vector3 pointC = SimplexList[4];
+      Vector3 pointD = SimplexList[5];
+      Vector3 direction = SimplexList[1];
+
+      Vector3 AB = pointB - pointA;
+      Vector3 AC = pointC - pointA;
+      Vector3 AD = pointD - pointA;
+      Vector3 AO = -pointA;
+
+      Vector3 ABC = Vector3.Cross(AB, AC);
+      Vector3 ACD = Vector3.Cross(AC, AD);
+      Vector3 ADB = Vector3.Cross(AD, AB);
+
+      if(SameDir(ABC, AO)){
+        SimplexList.RemoveAt(5); // Remove D
+        return Triangle(SimplexList);
+      }
+
+      if(SameDir(ACD, AO)){
+        SimplexList[3] = pointC;
+        SimplexList[4] = pointD;
+        SimplexList.RemoveAt(5);
+        return Triangle(SimplexList);
+      }
+
+      if(SameDir(ADB, AO)){
+        SimplexList[3] = pointD;
+        SimplexList[4] = pointB;
+        SimplexList.RemoveAt(5);
+        return Triangle(SimplexList);
+      }
+      return returnFunc(SimplexList, direction, true);
     }
 
     public List<Vector3> returnFunc(List<Vector3> SimplexList, Vector3 direction, bool returnValue){

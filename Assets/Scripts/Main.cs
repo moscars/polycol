@@ -36,10 +36,11 @@ public class Main : MonoBehaviour
     }
 
     void runGJK(){
-        foreach (CollisionObj collider in colliders){
-            List<Vector3> list = collider.getVertices();
-            foreach(Vector3 vertex in list){
-                toDraw.Add(vertex);
+        foreach(CollisionObj collider in colliders){
+            foreach(CollisionObj collider2 in colliders){
+                if(collider != collider2){
+                    gjkAlgo.runGJK(collider, collider2);
+                }
             }
         }
     }
@@ -48,7 +49,6 @@ public class Main : MonoBehaviour
         foreach (Vector3 pos in toDraw){
             instantiateVertex(pos);
         }
-        Debug.Log(toDraw.Count);
     }
 
     void destoryAllOldVertexPrefabs(){
