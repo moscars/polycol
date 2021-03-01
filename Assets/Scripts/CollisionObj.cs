@@ -25,7 +25,7 @@ public class CollisionObj : MonoBehaviour
 
     void Update(){
         if (isColliding){
-            changeColor();
+            //changeColor();
         }
     }
 

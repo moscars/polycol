@@ -37,7 +37,7 @@ public class Main : MonoBehaviour
 
     void runGJK(){
         foreach (CollisionObj collider in colliders){
-            List<Vector3> list = gjkAlgo.getVerticesOfObj(collider);
+            List<Vector3> list = collider.getVertices();
             foreach(Vector3 vertex in list){
                 toDraw.Add(vertex);
             }
