@@ -37,7 +37,7 @@ public class GJK
         SimplexList.Insert(2, newPoint);
         SimplexList = NewSimplex(SimplexList);
         if(SimplexList[0] == new Vector3(1, 1, 1)){ // Check the boolean flag
-          
+          EPA(firstCollider, secondCollider, SimplexList);
           return true;
         }
       }
@@ -205,4 +205,56 @@ public class GJK
       return result;
     }
 
+
+    void EPA(CollisionObj firstCollider, CollisionObj secondCollider, List<Vector3> SimplexList){
+
+      List<Vector3> polytope = SimplexList;
+      List<int> faces = new List<int>{
+        0, 1, 2,
+        0, 3, 1,
+        0, 2, 3,
+        1, 3, 2
+      };
+
+      (List<Vector4> normals, int minFace) g = GetFaceNormals(polytope, faces);
+
+
+    }
+
+    (List<Vector4>, int) GetFaceNormals(List<Vector3> polytope, List<int> faces){
+      List<Vector4> normals = new List<Vector4>();
+      int minTriangle = 0;
+      float minDistance = float.PositiveInfinity;
+
+      for(int i = 0; i < faces.Count; i+=3){
+        Vector3 A = polytope[faces[i]];
+        Vector3 B = polytope[faces[i + 1]];
+        Vector3 C = polytope[faces[i + 2]];
+
+        Vector3 AB = B - A;
+        Vector3 AC = C - A;
+
+        Vector3 normal = Vector3.Cross(AB, AC);
+        normal.Normalize();
+        float distance = Vector3.Dot(normal, A);
+
+        if (distance < 0){
+          normal = -normal;
+          distance = -distance;
+        }
+
+        Vector4 newNormal = new Vector4(normal.x, normal.y, normal.z, distance);
+        normals.Add(newNormal);
+
+        if(distance < minDistance){
+          minTriangle = i / 3;
+          minDistance = distance;
+        }
+      }
+      return (normals, minTriangle);
+    }
+
 }
+
+
+
