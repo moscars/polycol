@@ -26,6 +26,12 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        applyGravityToAllColliders();
+        updateAccelerationForAllColliders();
+        updateVelocityForAllColliders();
+        updatePosForAllColliders();
+        dontFallThroughFloorForAllColliders();
+
         toDraw = new List<Vector3>();
         destoryAllOldVertexPrefabs();
         if(counter % 25 == 0){
@@ -37,24 +43,58 @@ public class Main : MonoBehaviour
         counter++;
         runGJK();
         drawVertices();
+        zeroAllMovementForAllColliders();
+    }
+
+    void applyGravityToAllColliders(){
+        foreach(CollisionObj collider in colliders){
+            collider.applyGravity();
+        }
+    }
+
+    void updateAccelerationForAllColliders(){
+        foreach(CollisionObj collider in colliders){
+            collider.calculateAcceleration();
+        }
+    }
+
+    void updateVelocityForAllColliders(){
+        foreach(CollisionObj collider in colliders){
+            collider.updateVelocity();
+        }
+    }
+
+    void updatePosForAllColliders(){
+        foreach(CollisionObj collider in colliders){
+            collider.updatePos();
+        }
+    }
+
+    void dontFallThroughFloorForAllColliders(){
+        foreach(CollisionObj collider in colliders){
+            collider.dontFallThroughFloor();
+        }
+    }
+
+    void zeroAllMovementForAllColliders(){
+        foreach(CollisionObj collider in colliders){
+            collider.zeroAllMovement();
+        }
     }
 
     void runGJK(){
-
         for(int i = 0; i < colliders.Count; i++){
             for(int j = i + 1; j < colliders.Count; j++){
                 CollisionPoints p = gjkAlgo.runGJK(colliders[i], colliders[j]);
-                handleCollisions(p, colliders[i], colliders[j]);
+                handleCollision(p, colliders[i], colliders[j]);
             }
         }
     }
 
-    void handleCollisions(CollisionPoints points, CollisionObj firstCollider, CollisionObj secondCollider){
+    void handleCollision(CollisionPoints points, CollisionObj firstCollider, CollisionObj secondCollider){
         if(points.hasCollision){
-            firstCollider.addForce(-points.normal * 1000);
-            secondCollider.addForce(points.normal * 1000);
+            secondCollider.setPosition(secondCollider.getPosition() + points.normal * points.penetrationDepth);
         }
-        //firstCollider.addForce(new Vector3(0, 100, 0));
     }
 
     void drawVertices(){

@@ -22,25 +22,40 @@ public class CollisionObj : MonoBehaviour
         addForce(gravityForce);
     }
 
-    void FixedUpdate(){
-        applyGravity();
-        calculateAcceleration();
-        updateVelocity();
-        updatePos();
-        dontFallThroughFloor();
-        zeroAllMovement();
+    public Vector3 getVelocity(){
+        return velocity;
     }
 
-    void applyGravity(){
+    public void setVelocity(Vector3 vel){
+        velocity = vel;
+    }
+
+    public void setAcceleration(Vector3 acc){
+        acceleration = acc;
+    }
+
+    public void setPosition(Vector3 pos){
+        transform.position = pos;
+    }
+
+    public Vector3 getPosition(){
+        return transform.position;
+    }
+
+    public Vector3 getAcceleration(){
+        return acceleration;
+    }
+
+    public void applyGravity(){
         force += gravityForce;
     }
 
-    void zeroAllMovement(){
+    public void zeroAllMovement(){
         acceleration = Vector3.zero;
         velocity = Vector3.zero;
     }
 
-    void dontFallThroughFloor(){
+    public void dontFallThroughFloor(){
         if(transform.position.y < 0.5f){
             transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
         }
