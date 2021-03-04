@@ -22,28 +22,28 @@ public class CollisionObj : MonoBehaviour
         addForce(gravityForce);
     }
 
-
-    void Update(){
-        if (isColliding){
-            //changeColor();
-        }
-    }
-
     void FixedUpdate(){
-        if(transform.position.y <= 0.51f){
-            stopAtButtom();
-            isColliding = true;
-        } else{
-            updateVelocity();
-            updatePos();
-            calculateAcceleration();
-        }
+        applyGravity();
+        calculateAcceleration();
+        updateVelocity();
+        updatePos();
+        dontFallThroughFloor();
+        zeroAllMovement();
     }
 
-    void stopAtButtom(){
+    void applyGravity(){
+        force += gravityForce;
+    }
+
+    void zeroAllMovement(){
         acceleration = Vector3.zero;
         velocity = Vector3.zero;
-        transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+    }
+
+    void dontFallThroughFloor(){
+        if(transform.position.y < 0.5f){
+            transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+        }
     }
 
     public void addForce(Vector3 force){

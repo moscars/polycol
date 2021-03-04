@@ -24,15 +24,15 @@ public class Main : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         toDraw = new List<Vector3>();
         destoryAllOldVertexPrefabs();
         if(counter % 25 == 0){
-            /*CreateObjCloser(x);
-            x += 1.7f;
-            counter = 1;*/
-            CreateNewObj();
+            CreateObjCloser(x);
+            x = x;
+            counter = 1;
+            //CreateNewObj();
         }
         counter++;
         runGJK();
@@ -40,13 +40,21 @@ public class Main : MonoBehaviour
     }
 
     void runGJK(){
-        foreach(CollisionObj collider in colliders){
-            foreach(CollisionObj collider2 in colliders){
-                if(collider != collider2){
-                    gjkAlgo.runGJK(collider, collider2);
-                }
+
+        for(int i = 0; i < colliders.Count; i++){
+            for(int j = i + 1; j < colliders.Count; j++){
+                CollisionPoints p = gjkAlgo.runGJK(colliders[i], colliders[j]);
+                handleCollisions(p, colliders[i], colliders[j]);
             }
         }
+    }
+
+    void handleCollisions(CollisionPoints points, CollisionObj firstCollider, CollisionObj secondCollider){
+        if(points.hasCollision){
+            firstCollider.addForce(-points.normal * 1000);
+            secondCollider.addForce(points.normal * 1000);
+        }
+        //firstCollider.addForce(new Vector3(0, 100, 0));
     }
 
     void drawVertices(){

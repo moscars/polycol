@@ -211,7 +211,9 @@ public class GJK
 
 
     CollisionPoints EPA(CollisionObj firstCollider, CollisionObj secondCollider, List<Vector3> SimplexList){
-
+      SimplexList.RemoveAt(0); // Remove boolean flag
+      SimplexList.RemoveAt(0); // Remove dir
+      //Debug.Log(SimplexList.Count);
       List<Vector3> polytope = SimplexList;
       List<int> faces = new List<int>{
         0, 1, 2,
@@ -263,13 +265,17 @@ public class GJK
               i--;
             }
           }
+          
           List<int> newFaces = new List<int>();
           foreach ((int first, int second) edge in uniqueEdges){
             newFaces.Add(edge.first);
+            //Debug.Log("firstedge:" + edge.first);
             newFaces.Add(edge.second);
+            //Debug.Log("secondedge:" + edge.second);
             newFaces.Add(polytope.Count);
+            //Debug.Log("polytope" + polytope.Count);
           }
-
+          //Debug.Log("NewFaces:" + newFaces.Count);
           polytope.Add(furtherPoint);
           (List<Vector4> newNormals, int newMinFace) temp2 = GetFaceNormals(polytope, newFaces);
           List<Vector4> newNormals = temp2.newNormals;
@@ -284,6 +290,9 @@ public class GJK
             }
           }
 
+          //Debug.Log("Length: " + newNormals.Count);
+          //Debug.Log("MinT: " + newMinFace);
+
           if(newNormals[newMinFace].w < oldMinDistance){
             minFace = newMinFace + normals.Count;
           }
@@ -296,21 +305,15 @@ public class GJK
           } 
         }  
       }
+
     CollisionPoints points = new CollisionPoints(minNormal, minDistance + 0.001f, true);
     return points;
     }
 
 
-
-
-
-
-
-
     List<(int, int)> AddIfUniqueEdge(List<(int, int)> edges, List<int> faces, int a, int b){
     
       bool found = false;
-      bool keepGoing = true;
       (int, int) reversed = (faces[b], faces[a]);
       int index = 0;
 
@@ -363,6 +366,9 @@ public class GJK
           minDistance = distance;
         }
       }
+      //Debug.Log("faces: " + faces.Count);
+      //Debug.Log("Length in func: " + normals.Count);
+      //Debug.Log("MinT in Func: " + minTriangle);
       return (normals, minTriangle);
     }
 

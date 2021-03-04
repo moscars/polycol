@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class CollisionPoints
 {
-    Vector3 normal;
-    float penetrationDepth;
-    bool hasCollision; 
+    public Vector3 normal;
+    public float penetrationDepth;
+    public bool hasCollision; 
     public CollisionPoints(Vector3 normal, float penetrationDepth, bool hasCollision){
         this.normal = normal;
         this.penetrationDepth = penetrationDepth;
