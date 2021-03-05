@@ -34,7 +34,7 @@ public class GJK
         Vector3 newPoint = findMaxPointInConvexHull(direction, firstCollider, secondCollider);
         float newDotDir = Vector3.Dot(newPoint, direction);
         if(newDotDir <= 0){
-          CollisionPoints p = new CollisionPoints(Vector3.zero, -1, false);
+          CollisionPoints p = new CollisionPoints(Vector3.zero, -1, false, firstCollider, secondCollider);
           return (false, p);
         }
 
@@ -306,7 +306,7 @@ public class GJK
         }  
       }
 
-    CollisionPoints points = new CollisionPoints(minNormal, minDistance + 0.001f, true);
+    CollisionPoints points = new CollisionPoints(minNormal, minDistance + 0.001f, true, firstCollider, secondCollider);
     return points;
     }
 

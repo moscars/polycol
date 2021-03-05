@@ -5,10 +5,10 @@ using System.Linq;
 
 public class CollisionObj : MonoBehaviour
 {
-    public Vector3 gravityForce = new Vector3(0, -9.82f, 0);
+    public Vector3 gravityForce = new Vector3(0, -9.81f, 0);
     public Vector3 force;
-    Vector3 velocity;
-    float mass = 2000;
+    public Vector3 velocity;
+    public float mass = 2000;
     Vector3 acceleration;
     public bool isColliding;
     Vector3 position;
@@ -20,6 +20,10 @@ public class CollisionObj : MonoBehaviour
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
         addForce(gravityForce);
+    }
+
+    public void resetNetForce(){
+        force = Vector3.zero;
     }
 
     public Vector3 getVelocity(){
@@ -90,7 +94,7 @@ public class CollisionObj : MonoBehaviour
     }
 
     public void changeColor(){
-        GetComponent<Renderer>().material.color = Color.blue;
+        GetComponent<Renderer>().material.color = Color.red;
     }
 
     public void changeColorGJK(){
