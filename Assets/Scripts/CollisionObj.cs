@@ -6,20 +6,84 @@ using System.Linq;
 public class CollisionObj : MonoBehaviour
 {
     public Vector3 gravityForce = new Vector3(0, -9.81f, 0);
+
     public Vector3 force;
     public Vector3 velocity;
-    public float mass = 2000;
+    public float mass;
     Vector3 acceleration;
     public bool isColliding;
     Vector3 position;
 
+    
+    Quaternion orientation;
+    Vector3 angularMomentum;
+
+    Quaternion spin;
+    Vector3 angularVelocity;
+
+    float inertia;
+    float inverseIntertia;
+
+    Vector3 torque;
+    float x = 0;
+
+
     void Start(){
         //initilize cube
+        mass = 2000;
         isColliding = false;
         force = Vector3.zero;
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
         addForce(gravityForce);
+        inertia = 0.16666f * mass;
+        inverseIntertia = 1 / inertia;
+        torque = Vector3.zero;
+        angularMomentum = Vector3.zero;
+        //transform.rotation = Quaternion.Euler(new Vector3(0, 30, 0));
+    }
+
+    public void reCalculateRotation(){
+
+        //angularVelocity = angularMomentum * inverseIntertia; //Done
+
+        orientation.Normalize();
+
+        //Quaternion q  = (0f, angularVelocity.x, angularVelocity.y, angularVelocity.z); DOne
+
+        //spin = 0.5f * q * orientation; Doneish not 0.5
+    }
+
+    public void updateOrientation(){
+        spin = Quaternion.Euler(angularVelocity);
+        //Debug.Log("spin: " + spin);
+        //transform.rotation = new Quaternion(1, 1, 1, 1); //spin;
+        //Debug.Log("rot: " + transform.rotation);
+        transform.rotation *= spin;
+        //transform.rotation;
+        //x++;
+        //transform.rotation *= Quaternion.Euler(0, 0, 45);
+    }
+
+    public void addTorque(Vector3 torque){
+        this.torque += torque;
+        //angularVelocity += torque;
+        //Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + torque);
+    }
+
+    public void setAngularVelocity(Vector3 angularVelocity){
+        this.angularVelocity = angularVelocity;
+    }
+
+    public void zeroTorque(){
+        torque = Vector3.zero;
+    }
+
+    public void updateAngularVelocity(){
+        angularMomentum += torque;
+        //Debug.Log("angmom = " + angularMomentum + " and tor = : " + torque);
+
+        angularVelocity = angularMomentum * inverseIntertia;
     }
 
     public void resetNetForce(){
