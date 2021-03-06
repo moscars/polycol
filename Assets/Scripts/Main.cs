@@ -27,7 +27,7 @@ public class Main : MonoBehaviour
         gjkAlgo = new GJK();
         x = 0;
         //throwTwo(); 
-        //Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 5;
     }
     /*
     void Update(){
@@ -46,18 +46,19 @@ public class Main : MonoBehaviour
             //CreateObjCloser(x);
             x = x;
             //counter = 1;
-            CreateNewObj();
+            //CreateNewObj();
             //throwTwo();
         }
 
         if(counter == 40){
-            //makeWall();
-            //throwTwo();
+            makeWall();
+            throwTwo();
         }
         
         if(counter == 60){
-            //applyForcess();
+            applyForcess();
         }
+
         counter++;
         runGJK();
         solveCollisions();
