@@ -79,7 +79,7 @@ public class CollisionObj : MonoBehaviour
         this.force += force;
     }
 
-    public void calculateAcceleration(){
+    public void updateAcceleration(){
         acceleration = force / mass;
     }
 

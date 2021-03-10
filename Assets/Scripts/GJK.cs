@@ -78,52 +78,48 @@ public class GJK
       }
     }
 
-      public List<Vector3> Triangle(List<Vector3> SimplexList){
-        Vector3 pointA = SimplexList[2];
-        Vector3 pointB = SimplexList[3];
-        Vector3 pointC = SimplexList[4];
-        Vector3 direction = SimplexList[1];
+    public List<Vector3> Triangle(List<Vector3> SimplexList){
+      Vector3 pointA = SimplexList[2];
+      Vector3 pointB = SimplexList[3];
+      Vector3 pointC = SimplexList[4];
+      Vector3 direction = SimplexList[1];
 
-        Vector3 AB = pointB - pointA;
-        Vector3 AC = pointC - pointA;
-        Vector3 AO = -pointA;
+      Vector3 AB = pointB - pointA;
+      Vector3 AC = pointC - pointA;
+      Vector3 AO = -pointA;
 
-        Vector3 ABC = Vector3.Cross(AB, AC);
+      Vector3 ABC = Vector3.Cross(AB, AC);
 
-        if(SameDir(Vector3.Cross(ABC, AC), AO)){
+      if(SameDir(Vector3.Cross(ABC, AC), AO)){
           
-          if(SameDir(AC, AO)){
-            SimplexList.RemoveAt(3);
-            direction = Vector3.Cross(Vector3.Cross(AC, AO), AC);
-            return returnFunc(SimplexList, direction, false);
-          
-          } else{
-            SimplexList.RemoveAt(4);
-            return Line(SimplexList);
-          
-          }
+        if(SameDir(AC, AO)){
+          SimplexList.RemoveAt(3);
+          direction = Vector3.Cross(Vector3.Cross(AC, AO), AC);
+          return returnFunc(SimplexList, direction, false);
 
         } else{
-          
-          if(SameDir(Vector3.Cross(AB, ABC), AO)){
-            SimplexList.RemoveAt(4);
-            return Line(SimplexList);
-          
+          SimplexList.RemoveAt(4);
+          return Line(SimplexList);
+          }
+      } else{
+  
+        if(SameDir(Vector3.Cross(AB, ABC), AO)){
+          SimplexList.RemoveAt(4);
+          return Line(SimplexList);
+        } else{
+          if(SameDir(ABC, AO)){
+            direction = ABC;
+            return returnFunc(SimplexList, direction, false);
+            
           } else{
-            
-            if(SameDir(ABC, AO)){
-              direction = ABC;
-              return returnFunc(SimplexList, direction, false);
-            
-            } else{
-              direction = -ABC;
-              SimplexList[3] = pointC;
-              SimplexList[4] = pointB;
+            direction = -ABC;
+            SimplexList[3] = pointC;
+            SimplexList[4] = pointB;
 
-              return returnFunc(SimplexList, direction, false);
-            }
+            return returnFunc(SimplexList, direction, false);
           }
         }
+      }
     }
 
     public List<Vector3> Tetrahedron(List<Vector3> SimplexList){
@@ -143,7 +139,7 @@ public class GJK
       Vector3 ADB = Vector3.Cross(AD, AB);
 
       if(SameDir(ABC, AO)){
-        SimplexList.RemoveAt(5); // Remove D
+        SimplexList.RemoveAt(5);
         return Triangle(SimplexList);
       }
 
@@ -164,11 +160,9 @@ public class GJK
     }
 
     public List<Vector3> returnFunc(List<Vector3> SimplexList, Vector3 direction, bool returnValue){
-      Vector3 retTrue = new Vector3(1, 1, 1);
-      Vector3 retFalse = Vector3.zero;
 
       if(returnValue){
-        SimplexList[0] = retTrue;
+        SimplexList[0] = new Vector3(1, 1, 1); //True flag
       }
 
       SimplexList[1] = direction;
@@ -198,9 +192,9 @@ public class GJK
       float maxdot = float.NegativeInfinity;
       Vector3 result = Vector3.zero;
       foreach (Vector3 point in points){
-        float dotRes = Vector3.Dot(point, direction);
-        if(dotRes > maxdot){
-          maxdot = dotRes;
+        float res = Vector3.Dot(point, direction);
+        if(res > maxdot){
+          maxdot = res;
           result = point;
         }
       }
@@ -211,7 +205,7 @@ public class GJK
     CollisionPoints EPA(CollisionObj firstCollider, CollisionObj secondCollider, List<Vector3> SimplexList){
       SimplexList.RemoveAt(0); // Remove boolean flag
       SimplexList.RemoveAt(0); // Remove dir
-      //Debug.Log(SimplexList.Count);
+      
       List<Vector3> polytope = SimplexList;
       List<int> faces = new List<int>{
         0, 1, 2,

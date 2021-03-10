@@ -15,6 +15,8 @@ public class Main : MonoBehaviour
     bool oneNeedsVel = false;
     int numObjs = 0;
 
+    const float areaExtent = 15f;
+
     void Start()
     {
         collisionPoints = new List<CollisionPoints>();
@@ -26,30 +28,30 @@ public class Main : MonoBehaviour
     {
         if(colliders.Count < 90){
 
-        if(counter % 50 == 0){
-            CreateNewObj();
-            numObjs++;
-        }
+            if(counter % 50 == 0){
+                CreateNewObj();
+                numObjs++;
+            }
 
-        if(oneNeedsVel){
-            applyFoo();
-            oneNeedsVel = false;
-        }
+            if(oneNeedsVel){
+                applyFoo();
+                oneNeedsVel = false;
+            }
 
-        if(counter % 40 == 0){
-            createOnWithRandomVel();
-            numObjs++;
-            Debug.Log(numObjs);
-            oneNeedsVel = true;
+            if(counter % 40 == 0){
+                createOnWithRandomVel();
+                numObjs++;
+                Debug.Log(numObjs);
+                oneNeedsVel = true;
+            }
         }
-        }
+        
         counter++;
         
         runGJK();
         solveCollisions();
         //solveCollisionPos();
-        //solveCollisionsVel();
-        
+        //solveCollisionsVel(); 
         
         applyGravityToAllColliders();
         updateAccelerationForAllColliders();
@@ -64,16 +66,14 @@ public class Main : MonoBehaviour
     }
 
     void dontMoveOutsideArea(){
-
-        float extent = 15;
-        float width = 0.5f;
+        float colliderWidth = 0.5f;
 
         foreach(CollisionObj collider in colliders){
             Vector3 pos = collider.getPosition();
-            if(pos.x + width >= extent || pos.x - width <= -extent){
+            if(pos.x + colliderWidth >= areaExtent || pos.x - colliderWidth <= -areaExtent){
                 collider.setVelocity(new Vector3(-collider.velocity.x, collider.velocity.y, collider.velocity.z));
             }
-            if(pos.z + width >= extent || pos.z - width <= -extent){
+            if(pos.z + colliderWidth >= areaExtent || pos.z - colliderWidth <= -areaExtent){
                 collider.setVelocity(new Vector3(collider.velocity.x, collider.velocity.y, -collider.velocity.z));
             }
         }
@@ -95,7 +95,7 @@ public class Main : MonoBehaviour
         float extent = 14f;
         float randomX = UnityEngine.Random.Range(-extent, extent);
         float randomZ = UnityEngine.Random.Range(-extent, extent);
-        colliders[colliders.Count - 1].addForce(new Vector3(randomX, 0, randomZ) * -100);
+        colliders[colliders.Count - 1].addForce(new Vector3(randomX, 0, randomZ) * 100);
     }
 
     void resetNetForceForAllColliders(){
@@ -112,7 +112,7 @@ public class Main : MonoBehaviour
 
     void updateAccelerationForAllColliders(){
         foreach(CollisionObj collider in colliders){
-            collider.calculateAcceleration();
+            collider.updateAcceleration();
         }
     }
 
@@ -199,8 +199,8 @@ public class Main : MonoBehaviour
 
             firstCollider.setVelocity(newFirstVel);
             secondCollider.setVelocity(newSecondVel);
-            //firstCollider.setAcceleration(Vector3.zero);
-            //secondCollider.setAcceleration(Vector3.zero);
+            firstCollider.setAcceleration(Vector3.zero);
+            secondCollider.setAcceleration(Vector3.zero);
             i++;
         }
     }
