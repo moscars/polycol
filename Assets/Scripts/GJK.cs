@@ -28,7 +28,6 @@ public class GJK
       // First element in SimplexList is boolean flag
       // Second element in SimplexList is directionVector
       // The other elements in SimplexList are the Simplex points
-
       while(true){
         Vector3 direction = SimplexList[1];
         Vector3 newPoint = findMaxPointInConvexHull(direction, firstCollider, secondCollider);
@@ -55,7 +54,6 @@ public class GJK
           case 5: return Triangle(SimplexList);
           case 6: return Tetrahedron(SimplexList);
       }
-
       return returnFunc(SimplexList, SimplexList[1], false);
     }
 
@@ -269,13 +267,9 @@ public class GJK
           List<int> newFaces = new List<int>();
           foreach ((int first, int second) edge in uniqueEdges){
             newFaces.Add(edge.first);
-            //Debug.Log("firstedge:" + edge.first);
             newFaces.Add(edge.second);
-            //Debug.Log("secondedge:" + edge.second);
             newFaces.Add(polytope.Count);
-            //Debug.Log("polytope" + polytope.Count);
           }
-          //Debug.Log("NewFaces:" + newFaces.Count);
           polytope.Add(furtherPoint);
           (List<Vector4> newNormals, int newMinFace) temp2 = GetFaceNormals(polytope, newFaces);
           List<Vector4> newNormals = temp2.newNormals;
@@ -288,11 +282,7 @@ public class GJK
               oldMinDistance = normals[i].w;
               minFace = i;
             }
-          }
-
-          //Debug.Log("Length: " + newNormals.Count);
-          //Debug.Log("MinT: " + newMinFace);
-
+          }       
           if(newNormals[newMinFace].w < oldMinDistance){
             minFace = newMinFace + normals.Count;
           }
@@ -301,9 +291,9 @@ public class GJK
             faces.Add(face);
           }
           foreach (Vector4 normal in newNormals){
-            normals.Add(normal);
+            normals.Add(normal);           
           } 
-        }  
+        }
       }
 
     CollisionPoints points = new CollisionPoints(minNormal, minDistance + 0.001f, true, firstCollider, secondCollider);
@@ -366,9 +356,6 @@ public class GJK
           minDistance = distance;
         }
       }
-      //Debug.Log("faces: " + faces.Count);
-      //Debug.Log("Length in func: " + normals.Count);
-      //Debug.Log("MinT in Func: " + minTriangle);
       return (normals, minTriangle);
     }
 

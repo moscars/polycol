@@ -9,81 +9,26 @@ public class CollisionObj : MonoBehaviour
 
     public Vector3 force;
     public Vector3 velocity;
-    public float mass;
+    float mass = 2000;
     Vector3 acceleration;
     public bool isColliding;
-    Vector3 position;
-
-    
-    Quaternion orientation;
-    Vector3 angularMomentum;
-
-    Quaternion spin;
-    Vector3 angularVelocity;
-
-    float inertia;
-    float inverseIntertia;
-
-    Vector3 torque;
-    float x = 0;
-
+    public Vector3 position;
 
     void Start(){
         //initilize cube
-        mass = 2000;
         isColliding = false;
         force = Vector3.zero;
-        velocity = Vector3.zero;
         acceleration = Vector3.zero;
         addForce(gravityForce);
-        inertia = 0.16666f * mass;
-        inverseIntertia = 1 / inertia;
-        torque = Vector3.zero;
-        angularMomentum = Vector3.zero;
-        //transform.rotation = Quaternion.Euler(new Vector3(0, 30, 0));
+        velocity = Vector3.zero;
     }
 
-    public void reCalculateRotation(){
-
-        //angularVelocity = angularMomentum * inverseIntertia; //Done
-
-        orientation.Normalize();
-
-        //Quaternion q  = (0f, angularVelocity.x, angularVelocity.y, angularVelocity.z); DOne
-
-        //spin = 0.5f * q * orientation; Doneish not 0.5
+    public void moveUp(){
+        transform.position = new Vector3(transform.position.x, transform.position.y + 0.01f, transform.position.z);
     }
 
-    public void updateOrientation(){
-        spin = Quaternion.Euler(angularVelocity);
-        //Debug.Log("spin: " + spin);
-        //transform.rotation = new Quaternion(1, 1, 1, 1); //spin;
-        //Debug.Log("rot: " + transform.rotation);
-        transform.rotation *= spin;
-        //transform.rotation;
-        //x++;
-        //transform.rotation *= Quaternion.Euler(0, 0, 45);
-    }
-
-    public void addTorque(Vector3 torque){
-        this.torque += torque;
-        //angularVelocity += torque;
-        //Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + torque);
-    }
-
-    public void setAngularVelocity(Vector3 angularVelocity){
-        this.angularVelocity = angularVelocity;
-    }
-
-    public void zeroTorque(){
-        torque = Vector3.zero;
-    }
-
-    public void updateAngularVelocity(){
-        angularMomentum += torque;
-        //Debug.Log("angmom = " + angularMomentum + " and tor = : " + torque);
-
-        angularVelocity = angularMomentum * inverseIntertia;
+    public float getMass(){
+        return mass;
     }
 
     public void resetNetForce(){
@@ -126,6 +71,7 @@ public class CollisionObj : MonoBehaviour
     public void dontFallThroughFloor(){
         if(transform.position.y < 0.5f){
             transform.position = new Vector3(transform.position.x, 0.5f, transform.position.z);
+            setVelocity(new Vector3(velocity.x, 0, velocity.z));
         }
     }
 
@@ -174,7 +120,6 @@ public class CollisionObj : MonoBehaviour
     }
 
     public List<Vector3> getVertices(){
-        //Get vertices here
         Mesh mesh = GetComponent<MeshFilter>().mesh;
         Vector3[] v = mesh.vertices;
         List<Vector3> vertices = new List<Vector3>();

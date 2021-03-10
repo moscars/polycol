@@ -7,144 +7,95 @@ public class Main : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject colObject;
-    public GameObject vertexPrefab;
     List<CollisionObj> colliders;
-    List<GameObject> vertexPrefabList;
     public GJK gjkAlgo;
-    List<Vector3> toDraw;
-    float x;
     List<CollisionPoints> collisionPoints;
 
-    int counter = 1;
-
-    //private int screenshotCount = 0;
+    long counter = 1;
+    bool oneNeedsVel = false;
+    int numObjs = 0;
 
     void Start()
     {
         collisionPoints = new List<CollisionPoints>();
         colliders = new List<CollisionObj>();
-        vertexPrefabList = new List<GameObject>();
         gjkAlgo = new GJK();
-        x = 0;
-        //throwTwo(); 
-        //Application.targetFrameRate = 5;
     }
-    /*
-    void Update(){
-        screenshotCount++;
-        String screenshotFilename = "screenshots/screenshot" + screenshotCount + ".png";
-        ScreenCapture.CaptureScreenshot(screenshotFilename);
-    }*/
 
     void FixedUpdate()
     {
-        toDraw = new List<Vector3>();
-        destoryAllOldVertexPrefabs();
+        if(colliders.Count < 90){
 
-        
-        if(counter % 40 == 0){
-            //CreateObjCloser(x);
-            x = x;
-            //counter = 1;
+        if(counter % 50 == 0){
             CreateNewObj();
-            //throwTwo();
+            numObjs++;
         }
 
-        if(counter == 40){
-            //makeWall();
-            //throwTwo();
+        if(oneNeedsVel){
+            applyFoo();
+            oneNeedsVel = false;
         }
 
-        if(counter == 50){
-            //makeWall();
-            //applyTorquee();
+        if(counter % 40 == 0){
+            createOnWithRandomVel();
+            numObjs++;
+            Debug.Log(numObjs);
+            oneNeedsVel = true;
         }
-        
-        if(counter == 60){
-            //applyForcess();
         }
-
-        if(counter == 100){
-            //applyTorquee();
-        }
-
         counter++;
+        
         runGJK();
         solveCollisions();
         //solveCollisionPos();
         //solveCollisionsVel();
+        
+        
         applyGravityToAllColliders();
         updateAccelerationForAllColliders();
         updateVelocityForAllColliders();
         updatePosForAllColliders();
 
-        //solveRotations();
-        //updateAngularVelocityForAllColliders();
-        updateOrientationForAllColliders();
-
-        dontFallThroughFloorForAllColliders();
         resetNetForceForAllColliders();
-        zeroTorqueForAllColliders();
+        dontMoveOutsideArea();
+        dontFallThroughFloorForAllColliders();
+        
         collisionPoints = new List<CollisionPoints>();
-        //zeroAllMovementForAllColliders();
     }
 
-    void applyForcess(){
-        CollisionObj obj1 = colliders[0];//colliders.Count - 1];
-        CollisionObj obj2 = colliders[1];
+    void dontMoveOutsideArea(){
 
-        obj1.addForce(new Vector3(5, 3, 0) * 100);
-        obj2.addForce(new Vector3(-5, 3, 0) * 100);
-    }
+        float extent = 15;
+        float width = 0.5f;
 
-    void applyTorquee(){
-        CollisionObj obj1 = colliders[0];//colliders.Count - 1];
-        CollisionObj obj2 = colliders[1];
-
-        obj1.addTorque(new Vector3(10000, 10000, 0));
-        obj2.addTorque(new Vector3(10000, 10000, 0));
-    }
-
-    void throwTwo(){
-        Vector3 pos1 = new Vector3(-7, 2, 0);
-        GameObject obj1 = Instantiate(colObject, pos1, Quaternion.identity);
-        CollisionObj colObj1 = obj1.GetComponent<CollisionObj>();
-        colliders.Add(colObj1);
-
-        Vector3 pos2 = new Vector3(7, 2, 0);
-        GameObject obj2 = Instantiate(colObject, pos2, Quaternion.identity);
-        CollisionObj colObj2 = obj2.GetComponent<CollisionObj>();
-        colliders.Add(colObj2);
-        colObj2.changeColor();
-    }
-
-    void makeWall(){
-        for(int i = 0; i < 20; i+=2){
-            for(float j = -1; j < 1; j+=2f){
-                Vector3 pos = new Vector3(-4, i, j);
-                GameObject obj1 = Instantiate(colObject, pos, Quaternion.identity);
-                CollisionObj colObj1 = obj1.GetComponent<CollisionObj>();
-                colliders.Add(colObj1);
+        foreach(CollisionObj collider in colliders){
+            Vector3 pos = collider.getPosition();
+            if(pos.x + width >= extent || pos.x - width <= -extent){
+                collider.setVelocity(new Vector3(-collider.velocity.x, collider.velocity.y, collider.velocity.z));
+            }
+            if(pos.z + width >= extent || pos.z - width <= -extent){
+                collider.setVelocity(new Vector3(collider.velocity.x, collider.velocity.y, -collider.velocity.z));
             }
         }
     }
 
-    void zeroTorqueForAllColliders(){
-        foreach(CollisionObj collider in colliders){
-            collider.zeroTorque();
-        }
+    public void createOnWithRandomVel(){
+        float extent = 7f;
+        float randomX = UnityEngine.Random.Range(-extent, extent);
+        float randomZ = UnityEngine.Random.Range(-extent, extent);
+        float randomY = UnityEngine.Random.Range(3f, 6f);
+        Vector3 pos = new Vector3(randomX, randomY, randomZ);
+        GameObject obj = Instantiate(colObject, pos, Quaternion.identity);
+        CollisionObj colObj = obj.GetComponent<CollisionObj>();
+        colliders.Add(colObj);
     }
 
-    void updateAngularVelocityForAllColliders(){
-        foreach(CollisionObj collider in colliders){
-            collider.updateAngularVelocity();
-        }
-    }
 
-    void updateOrientationForAllColliders(){
-        foreach(CollisionObj collider in colliders){
-            collider.updateOrientation();
-        }
+    void applyFoo(){
+        float extent = 14f;
+        float randomX = UnityEngine.Random.Range(-extent, extent);
+        float randomZ = UnityEngine.Random.Range(-extent, extent);
+        colliders[colliders.Count - 1].addForce(new Vector3(randomX, 0, randomZ) * -100);
     }
 
     void resetNetForceForAllColliders(){
@@ -236,7 +187,6 @@ public class Main : MonoBehaviour
                 secondCollider.setPosition(temp.newSecondPos);
             } else{
                 firstCollider.setPosition(temp.newSecondPos);
-                //secondCollider.setPosition(temp.newSecondPos);
             }
             
 
@@ -249,37 +199,8 @@ public class Main : MonoBehaviour
 
             firstCollider.setVelocity(newFirstVel);
             secondCollider.setVelocity(newSecondVel);
-            firstCollider.setAcceleration(Vector3.zero);
-            secondCollider.setAcceleration(Vector3.zero);
-            i++;
-        }
-    }
-
-     void solveRotations(){
-         Vector3 newRot = Vector3.zero;
-         List<Vector3> rots = new List<Vector3>();
-         foreach (CollisionPoints collisionPoint in collisionPoints){
-            CollisionObj firstCollider = collisionPoint.getFirstCollider();
-            CollisionObj secondCollider = collisionPoint.getSecondCollider();
-
-            Vector3 distanceVector = collisionPoint.normal * collisionPoint.penetrationDepth;
-            Vector3 directionOfRotation = - distanceVector;
-
-            newRot = directionOfRotation;
-            rots.Add(newRot);
-         }
-
-        int i = 0;
-        foreach(CollisionPoints collisionPoint in collisionPoints){
-            CollisionObj firstCollider = collisionPoint.getFirstCollider();
-            CollisionObj secondCollider = collisionPoint.getSecondCollider();
-
-            Vector3 directionOfRotation = rots[i];
-
-            //firstCollider.setAngularVelocity(directionOfRotation * 500);
-            secondCollider.setAngularVelocity(directionOfRotation * 500);
-            firstCollider.zeroTorque();
-            secondCollider.zeroTorque();
+            //firstCollider.setAcceleration(Vector3.zero);
+            //secondCollider.setAcceleration(Vector3.zero);
             i++;
         }
     }
@@ -291,8 +212,8 @@ public class Main : MonoBehaviour
             CollisionObj firstCollider = collisionPoint.getFirstCollider();
             CollisionObj secondCollider = collisionPoint.getSecondCollider();
             
-            float firstColMass = firstCollider.mass;
-            float secondColMass = secondCollider.mass;
+            float firstColMass = firstCollider.getMass();
+            float secondColMass = secondCollider.getMass();
 
             const float percent = 0.4f;
 			const float slop = 0.01f;
@@ -330,8 +251,8 @@ public class Main : MonoBehaviour
 
             float nSpd = Vector3.Dot(diffVel, collisionPoint.normal);
 
-            float firstColMass = firstCollider.mass;
-            float secondColMass = secondCollider.mass;
+            float firstColMass = firstCollider.getMass();
+            float secondColMass = secondCollider.getMass();
 
             if(nSpd >= 0){
                 continue;
@@ -351,56 +272,14 @@ public class Main : MonoBehaviour
         }
     }
 
-    void handleCollision(CollisionPoints points, CollisionObj firstCollider, CollisionObj secondCollider){
-        if(points.hasCollision){
-            Vector3 firstVelBefore = firstCollider.getVelocity();
-            Vector3 secondVelBefore = secondCollider.getVelocity();
-
-            secondCollider.setPosition(secondCollider.getPosition() + points.normal * points.penetrationDepth);
-
-            firstCollider.setVelocity(Vector3.zero);
-            secondCollider.setVelocity(Vector3.zero);
-
-            firstCollider.setAcceleration(Vector3.zero);
-            secondCollider.setAcceleration(Vector3.zero);
-            
-        }
-    }
-
-    void drawVertices(){
-        foreach (Vector3 pos in toDraw){
-            instantiateVertex(pos);
-        }
-    }
-
-    void destoryAllOldVertexPrefabs(){
-        foreach (GameObject vertex in vertexPrefabList){
-            Destroy(vertex);
-        }
-    }
-
-    void CreateObjCloser(float x){
-        float y = 20;
-        float z = 0;
-        Vector3 pos = new Vector3(x, y, z);
-        GameObject obj = Instantiate(colObject, pos, Quaternion.identity);
-        CollisionObj colObj = obj.GetComponent<CollisionObj>();
-        colliders.Add(colObj);
-    }
-
     void CreateNewObj(){
-        float extent = 2f;
+        float extent = 1.8f;
         float randomX = UnityEngine.Random.Range(-extent, extent);
         float randomZ = UnityEngine.Random.Range(-extent, extent);
         float randomY = UnityEngine.Random.Range(15f, 25f);
         Vector3 pos = new Vector3(randomX, randomY, randomZ);
-        GameObject obj = Instantiate(colObject, pos, Quaternion.identity);
+        GameObject obj = Instantiate(colObject, pos, Quaternion.identity);//Quaternion.Euler(UnityEngine.Random.Range(0.0f, 360.0f), UnityEngine.Random.Range(0.0f, 360.0f), UnityEngine.Random.Range(0.0f, 360.0f)));
         CollisionObj colObj = obj.GetComponent<CollisionObj>();
         colliders.Add(colObj);
-    }
-
-    public void instantiateVertex(Vector3 pos){
-      GameObject obj = Instantiate(vertexPrefab, pos, Quaternion.identity);
-      vertexPrefabList.Add(obj);
     }
 }
