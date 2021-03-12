@@ -5,26 +5,20 @@ using System.Linq;
 
 public class CollisionObj : MonoBehaviour
 {
-    public Vector3 gravityForce = new Vector3(0, -9.81f, 0);
+    private Vector3 gravityForce = new Vector3(0, -9.81f, 0);
+    private Vector3 force;
+    private Vector3 velocity;
+    private float mass = 2000;
+    private Vector3 acceleration;
+    private const float width = 0.5f;
 
-    public Vector3 force;
-    public Vector3 velocity;
-    float mass = 2000;
-    Vector3 acceleration;
-    public bool isColliding;
-    public Vector3 position;
+    
 
     void Start(){
-        //initilize cube
-        isColliding = false;
         force = Vector3.zero;
         acceleration = Vector3.zero;
         addForce(gravityForce);
         velocity = Vector3.zero;
-    }
-
-    public void moveUp(){
-        transform.position = new Vector3(transform.position.x, transform.position.y + 0.01f, transform.position.z);
     }
 
     public float getMass(){
@@ -75,6 +69,16 @@ public class CollisionObj : MonoBehaviour
         }
     }
 
+    public void dontMoveOutsideArea(float areaExtent){
+        Vector3 pos = getPosition();
+        if(pos.x + width >= areaExtent || pos.x - width <= -areaExtent){
+            setVelocity(new Vector3(-velocity.x, velocity.y, velocity.z));
+        }
+        if(pos.z + width >= areaExtent || pos.z - width <= -areaExtent){
+            setVelocity(new Vector3(velocity.x, velocity.y, -velocity.z));
+        }
+    }
+
     public void addForce(Vector3 force){
         this.force += force;
     }
@@ -111,14 +115,6 @@ public class CollisionObj : MonoBehaviour
         GetComponent<Renderer>().material.color = Color.green;
     }
 
-    public void setCollidingToTrue(){
-        isColliding = true;
-    }
-
-    public void setCollidingToFalse(){
-        isColliding = false;
-    }
-
     public List<Vector3> getVertices(){
         Mesh mesh = GetComponent<MeshFilter>().mesh;
         Vector3[] v = mesh.vertices;
@@ -130,10 +126,6 @@ public class CollisionObj : MonoBehaviour
             }
         }
         return vertices;
-    }
-
-    public Vector3 getPos(){
-        return transform.position;
     }
     
 }

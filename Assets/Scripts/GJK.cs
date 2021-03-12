@@ -7,8 +7,8 @@ public class GJK
 {
     public GJK(){}
 
-    public CollisionPoints runGJK(CollisionObj firstCollider, CollisionObj secondCollider){
-      (bool gjkRes, CollisionPoints points) g = gjk(firstCollider, secondCollider);
+    public CollisionPoint GJKReturn(CollisionObj firstCollider, CollisionObj secondCollider){
+      (bool gjkRes, CollisionPoint points) g = gjk(firstCollider, secondCollider);
       if(g.gjkRes){
         firstCollider.changeColorGJK();
         secondCollider.changeColorGJK();
@@ -16,7 +16,7 @@ public class GJK
       return g.points;
     }
 
-    public (bool, CollisionPoints) gjk(CollisionObj firstCollider, CollisionObj secondCollider){
+    public (bool, CollisionPoint) gjk(CollisionObj firstCollider, CollisionObj secondCollider){
       Vector3 dir = new Vector3(1, 1, 1);
       Vector3 firstPoint = findMaxPointInConvexHull(dir, firstCollider, secondCollider);
       List<Vector3> SimplexList = new List<Vector3>();
@@ -33,14 +33,14 @@ public class GJK
         Vector3 newPoint = findMaxPointInConvexHull(direction, firstCollider, secondCollider);
         float newDotDir = Vector3.Dot(newPoint, direction);
         if(newDotDir <= 0){
-          CollisionPoints p = new CollisionPoints(Vector3.zero, -1, false, firstCollider, secondCollider);
+          CollisionPoint p = new CollisionPoint(Vector3.zero, -1, false, firstCollider, secondCollider);
           return (false, p);
         }
 
         SimplexList.Insert(2, newPoint);
         SimplexList = NewSimplex(SimplexList);
         if(SimplexList[0] == new Vector3(1, 1, 1)){ // Check the boolean flag
-          CollisionPoints points = EPA(firstCollider, secondCollider, SimplexList);
+          CollisionPoint points = EPA(firstCollider, secondCollider, SimplexList);
           return (true, points);
         }
       }
@@ -72,7 +72,7 @@ public class GJK
         return returnFunc(SimplexList, direction, false);
       } else{
         SimplexList.RemoveAt(3);
-        direction = AO;
+        direction = AO; 
 
         return returnFunc(SimplexList, direction, false);
       }
@@ -202,7 +202,7 @@ public class GJK
     }
 
 
-    CollisionPoints EPA(CollisionObj firstCollider, CollisionObj secondCollider, List<Vector3> SimplexList){
+    CollisionPoint EPA(CollisionObj firstCollider, CollisionObj secondCollider, List<Vector3> SimplexList){
       SimplexList.RemoveAt(0); // Remove boolean flag
       SimplexList.RemoveAt(0); // Remove dir
       
@@ -290,7 +290,7 @@ public class GJK
         }
       }
 
-    CollisionPoints points = new CollisionPoints(minNormal, minDistance + 0.001f, true, firstCollider, secondCollider);
+    CollisionPoint points = new CollisionPoint(minNormal, minDistance + 0.001f, true, firstCollider, secondCollider);
     return points;
     }
 
